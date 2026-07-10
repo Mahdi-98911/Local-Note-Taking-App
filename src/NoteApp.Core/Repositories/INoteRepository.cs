@@ -7,9 +7,12 @@ namespace NoteApp.Core.Repositories
 {
     interface INoteRepository
     {
-        Task CreateNote(Note note);
-        Task<List<Note>> ReadNotes();
-        Task Update(int Id, string? Title, string? Body, List<Tag>? Tages);
-        Task Delete(int Id);
+        Task<List<Note>> GetAllAsync();
+        Task<Note?> GetByIdAsync(int id);
+        Task<List<Note>> SearchAsync(string keyword);
+        Task<List<Note>> GetByTagAsync(string tagName);
+        Task<Note> AddAsync(Note note);
+        Task UpdateAsync(Note note);
+        Task DeleteAsync(int id);
     }
 }

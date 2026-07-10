@@ -14,40 +14,68 @@ namespace NoteApp.Core.Repositories
         {
             _context = context;
         }
-        public async Task CreateNote(Note note)
+        public async Task<Note> AddAsync(Note note)
         {
             _context.Notes.Add(note);
             await _context.SaveChangesAsync();
+            return note;
         }
-        public async Task<List<Note>> ReadNotes()
+        public async Task<List<Note>> GetAllAsync()
         {
-            return await _context.Notes.ToListAsync();
+            return await _context.Notes.Include(n => n.Tags).ToListAsync();
         }
-        public async Task Update(int id, string? title, string? body, List<Tag>? tags)
+        public async Task<Note?> GetByIdAsync(int id)
         {
-            var note = await _context.Notes.FindAsync(id);
-
+            var note = await _context.Notes
+                .Include(n => n.Tags)
+                .FirstOrDefaultAsync(n => n.Id == id);
             if(note == null)
             {
-                return;
+                return null;
+            }
+            return note;
+        }
+        public async Task<List<Note>> SearchAsync(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                return new List<Note>();
+            }
+            keyword = keyword.Trim().ToLower();
+
+            return await _context.Notes
+                .Include(n => n.Tags)
+                .Where(n =>
+                EF.Functions.Like(n.Title, $"%{keyword}%") ||
+                EF.Functions.Like(n.Body, $"%{keyword}%") ||
+                n.Tags.Any(t => EF.Functions.Like(t.Name, $"%{keyword}%")))
+                .OrderByDescending(n => n.LastUpdatedAt)
+                .ToListAsync();
+
+        }
+
+        public async Task<List<Note>> GetByTagAsync(string tagName)
+        {
+            if (string.IsNullOrWhiteSpace(tagName))
+            {
+                return new List<Note>();
             }
 
-            if(title != null)
-            {
-                note.Title = title;
-            }
-            if(body != null)
-            {
-                note.Body = body;
-            }
-            if(tags != null)
-            {
-                note.Tags = tags;
-            }
+            tagName = tagName.Trim().ToLower();
+
+            return await _context.Notes
+                .Include(n => n.Tags)
+                .Where(n => n.Tags.Any(t => t.Name.ToLower() == tagName))
+                .OrderByDescending(n => n.LastUpdatedAt)
+                .ToListAsync();
+        }
+        public async Task UpdateAsync(Note updatedNote)
+        {
+            _context.Notes.Update(updatedNote);
             await _context.SaveChangesAsync();
 
         }
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             var note = await _context.Notes.FindAsync(id);
             if(note == null)

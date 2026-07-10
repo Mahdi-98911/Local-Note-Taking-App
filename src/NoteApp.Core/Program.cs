@@ -7,10 +7,9 @@ using NoteApp.Core.Data;
 HostApplicationBuilder builder = new HostApplicationBuilder(args);
 
 // Set database path explicitly
-var dbPath = Path.Combine(builder.Environment.ContentRootPath, "notes.db");
-
+var dbPath = Path.Combine(AppContext.BaseDirectory, "notes.db");
 builder.Services.AddDbContext<NoteDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlite($"Data Source={dbPath}"));
 
 var host = builder.Build();
 
