@@ -22,5 +22,13 @@
 		<PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.50.3" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Include="appsettigns.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+
+
 
 </Project>
