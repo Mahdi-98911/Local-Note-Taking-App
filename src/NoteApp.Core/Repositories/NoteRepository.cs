@@ -3,6 +3,7 @@ using NoteApp.Core.Data;
 using NoteApp.Core.Models;
 using System;
 using System.Collections.Generic;
+using System.Formats.Asn1;
 using System.Text;
 
 namespace NoteApp.Core.Repositories
@@ -85,6 +86,22 @@ namespace NoteApp.Core.Repositories
             _context.Notes.Remove(note);
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<Tag?> GetTagByNameAsync(string name)
+        {
+            var tag = await _context.Tags.FirstOrDefaultAsync(t => t.Name == name);
+            if(tag == null)
+            {
+                return null;
+            }
+            return tag;
+        }
+        public async Task<Tag> AddTagAsync(Tag tag)
+        {
+            await _context.Tags.AddAsync(tag);
+            await _context.SaveChangesAsync();
+            return tag;
         }
     }
 }

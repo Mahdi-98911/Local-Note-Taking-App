@@ -14,5 +14,7 @@ namespace NoteApp.Core.Repositories
         Task<Note> AddAsync(Note note);
         Task UpdateAsync(Note note);
         Task DeleteAsync(int id);
+        Task<Tag?> GetTagByNameAsync(string name);
+        Task<Tag> AddTagAsync(Tag tag);
     }
 }
