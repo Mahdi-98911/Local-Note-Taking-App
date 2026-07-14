@@ -10,15 +10,15 @@ using NoteApp.Core.Exceptions;
 
 namespace NoteApp.Core.Services
 {
-    internal class NoteService
+    internal class NoteService : INoteService
     {
         private readonly INoteRepository _repository;
         private readonly ILogger<NoteService> _logger;
-        private readonly NoteDbContext _context;
-        public NoteService(INoteRepository repository , ILogger<NoteService> logger , NoteDbContext context) { 
+        
+        public NoteService(INoteRepository repository , ILogger<NoteService> logger ) { 
             _repository = repository;
             _logger = logger;
-            _context = context;
+            
         }
 
         public async Task<Note> AddNoteAsync(string title, string body, List<string> tagNames)
@@ -46,8 +46,8 @@ namespace NoteApp.Core.Services
                 else
                 {
                     tagToUse = new Tag { Name = tag };
-                    _context.Tags.Add(tagToUse);
-                    await _context.SaveChangesAsync();
+                    await _repository.AddTagAsync(tagToUse);
+
                 }
 
                 note.Tags.Add(tagToUse);
@@ -130,8 +130,7 @@ namespace NoteApp.Core.Services
                     else
                     {
                         tagToUse = new Tag { Name = tag };
-                        await _context.Tags.AddAsync(tagToUse);
-                        await _context.SaveChangesAsync();
+                        await _repository.AddTagAsync(tagToUse);
                     }
                     note.Tags.Add(tagToUse);
                 }

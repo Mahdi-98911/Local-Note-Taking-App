@@ -4,7 +4,7 @@ using System.Text;
 
 namespace NoteApp.Core.Models
 {
-    internal class Note
+    public class Note
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;

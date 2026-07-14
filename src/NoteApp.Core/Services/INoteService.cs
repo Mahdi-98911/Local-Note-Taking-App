@@ -5,7 +5,7 @@ using System.Text;
 
 namespace NoteApp.Core.Services
 {
-    interface INoteService
+    public interface INoteService
     {
         Task<Note> AddNoteAsync(string title, string Body, List<string> tagNames);
         Task<List<Note>> GetAllNotesAsync();
